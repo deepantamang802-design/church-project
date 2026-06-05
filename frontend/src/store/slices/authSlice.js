@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk('auth/login', async (credentials, { re
     localStorage.setItem('access',  data.access)
     localStorage.setItem('refresh', data.refresh)
     const profile = await api.get('/auth/profile/')
-    return profile.data
+    return { user: profile.data, token: data.access }
   } catch (err) {
     return rejectWithValue(err.response?.data || { detail: 'Login failed' })
   }
@@ -60,7 +60,11 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending,   (s) => { s.loading = true;  s.error = null })
-      .addCase(loginUser.fulfilled, (s, a) => { s.loading = false; s.user = a.payload })
+      .addCase(loginUser.fulfilled, (s, a) => {
+        s.loading = false
+        s.user = a.payload.user
+        s.token = a.payload.token
+      })
       .addCase(loginUser.rejected,  (s, a) => { s.loading = false; s.error = a.payload })
       .addCase(registerUser.pending,   (s) => { s.loading = true;  s.error = null })
       .addCase(registerUser.fulfilled, (s) => { s.loading = false })
