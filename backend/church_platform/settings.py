@@ -6,7 +6,10 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config(
+    'SECRET_KEY',
+    default='django-insecure-render-fallback-change-this-secret-key',
+)
 DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = [
     h.strip() for h in config(
@@ -67,20 +70,28 @@ TEMPLATES = [
 ]
 
 DATABASE_URL = config("DATABASE_URL", default="")
+DB_NAME = config("DB_NAME", default="")
 
 if DATABASE_URL:
     DATABASES = {
         "default": dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-else:
+elif DB_NAME:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("DB_NAME", default="church_platform"),
+            "NAME": DB_NAME,
             "USER": config("DB_USER", default="postgres"),
             "PASSWORD": config("DB_PASSWORD", default="postgres"),
             "HOST": config("DB_HOST", default="localhost"),
             "PORT": config("DB_PORT", default="5432"),
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
