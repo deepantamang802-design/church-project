@@ -12,6 +12,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "church_platform.settings")
 from django.core.management import call_command
 from django.core.wsgi import get_wsgi_application
 
-call_command("migrate", interactive=False, run_syncdb=True, verbosity=0)
-
 application = get_wsgi_application()
+
+call_command("migrate", interactive=False, run_syncdb=True, verbosity=0)
